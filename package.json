@@ -1,0 +1,31 @@
+{
+  "name": "gini-vue",
+  "version": "0.0.1",
+  "description": "a vue-server-renderer template for gini",
+  "preferGlobal": true,
+  "bin": {
+    "gini-vue-init": "bin/gini-vue-init"
+  },
+  "main": "lib/index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HuangStomach/gini-vue.git"
+  },
+  "keywords": [
+    "gini"
+  ],
+  "author": "jipeng.huang",
+  "license": "ISC",
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "dependencies": {
+    "download-git-repo": "^0.2.1"
+  }
+}
