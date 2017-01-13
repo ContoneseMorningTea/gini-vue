@@ -1,0 +1,74 @@
+#!/usr/bin/env node
+
+var os = require('os'), 
+    path = require('path'),
+    uid = require('uid'),
+    ora = require('ora'),
+    exists = require('fs').existsSync,
+    config = require('../config'),
+    fs = require('fs-extra'),
+    program = require('commander'),
+    inquirer = require('inquirer'),
+    chalk = require('chalk'),
+    download = require('download-git-repo')
+
+program
+  .usage('[project-name]')
+
+program.on('--help', () => {
+  console.log('  例如:')
+  console.log()
+  console.log(chalk.green('    创建一个名为smallpanz的项目'))
+  console.log('    $ gini init smallpanz')
+  console.log()
+})
+
+var help = () => {
+  program.parse(process.argv)
+  if (program.args.length < 1) return program.help()
+}
+help()
+
+/**
+ * 只是一些换行.
+ */
+
+console.log()
+process.on('exit', () => {
+  console.log()
+})
+
+var name = program.args[0],
+    dir = path.resolve(name)
+
+var run = () => {
+  var tmp = `${os.tmpdir()}/gini-template-${uid()}`,
+      spinner = ora(`正在下载模板[${config.repository}]...`)
+  spinner.start()
+  download(config.repository, tmp, err => {    
+    spinner.stop()
+    process.on('exit', () => {
+      fs.removeSync(tmp)
+    })
+    if (err) console.log(chalk.red(`下载模板 ${config.repository} 失败: ${err.message.trim()}`))
+    fs.copy(tmp, dir, (err) => {
+      if (err) console.log(chalk.red(`项目生成 ${dir} 失败: ${err.message.trim()}`))
+      console.log(chalk.green('项目生成完成'))
+    })
+  })
+}
+
+
+if (fs.existsSync(dir)) {
+  inquirer.prompt([{
+    type: 'confirm',
+    message: '该目录已存在，是否覆盖?',
+    name: 'ok'
+  }]).then(answers => {
+    if (answers.ok) {
+      run()
+    }
+  })
+} else {
+  run()
+}
